@@ -77,28 +77,11 @@ public class IndeedScraper{
 
 		// handle popup
 		boolean popupClosed = false;
+		
 
 		// traverse through pages
 		for (int i = 1; i <= numPages; i++) {
 			System.out.println("Page: " + i);
-
-			// try clicking the close button for popups
-			if (!popupClosed) {
-				try {
-					// wait for popup
-					Thread.sleep(1000);
-
-					// click close button
-					WebElement closeButton = driver.findElement(By.xpath("//button[@class='css-yi9ndv e8ju0x51']"));
-					closeButton.click();
-
-					// see bool to true
-					popupClosed = true;
-				} catch (Exception closeException) {
-					// handle the exception if the close button is not found or clickable
-					System.out.println("Popup not found.");
-				}
-			}
 
 			// get job titles (grab spans inside a elements for titles)
 			List<WebElement> jobTitle = driver
@@ -166,35 +149,33 @@ public class IndeedScraper{
 
 			// find and click button to traverse to next page
 			try {
+				//find button
 				WebElement pagei = driver.findElement(
 						By.xpath("//ul[@class='css-1g90gv6 eu4oa1w0']/li/a[@data-testid='pagination-page-next']"));
+				//click button
 				pagei.click();
-				// if not found
-			} catch (Exception e) {
-				System.out.println("Pagination button not found or not clickable.");
-				// sleep
-				Thread.sleep(1000);
-
-				// try clicking the close button for popups
-				if (!popupClosed) {
+				
+				//wait till pop up appears and closes
+				while (!popupClosed) {
 					try {
+						// wait for popup
+						Thread.sleep(1000);
+
 						// click close button
 						WebElement closeButton = driver.findElement(By.xpath("//button[@class='css-yi9ndv e8ju0x51']"));
 						closeButton.click();
-						
-						//click next page
-						WebElement pagei = driver.findElement(By.xpath(
-								"//ul[@class='css-1g90gv6 eu4oa1w0']/li/a[@data-testid='pagination-page-next']"));
-						pagei.click();
-						
-						//popup closed
+
+						// see bool to true
 						popupClosed = true;
-						
 					} catch (Exception closeException) {
 						// handle the exception if the close button is not found or clickable
 						System.out.println("Popup not found.");
 					}
 				}
+				
+				// if not found
+			} catch (Exception e) {
+				System.out.println("Pagination button not found or not clickable.");
 			}
 
 		}
